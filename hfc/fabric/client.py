@@ -28,7 +28,7 @@ from hfc.fabric.peer import Peer
 from hfc.fabric.organization import create_org
 from hfc.fabric.transaction.tx_context import TXContext, create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
-    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, \
+    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, CC_TYPE_JAVA, CC_INSTANTIATE, \
     CC_INVOKE, CC_QUERY
 from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
