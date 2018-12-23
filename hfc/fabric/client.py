@@ -881,12 +881,13 @@ class Client(object):
                 "Failed to query installed chaincodes: {}", sys.exc_info()[0])
             raise
 
-    def query_channels(self, requestor, peer_names, timeout=10):
+    def query_channels(self, requestor, peer_names, request_channel='mychannel', timeout=10):
         """
         Queries channel name joined by a peer
 
         :param requestor: User role who issue the request
         :param peer_names: Names of the peers to install
+        :param request_channel: Name of the channel that the query sent to
         :return: A `ChannelQueryResponse`
         """
 
@@ -906,7 +907,7 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        response = Channel('businesschannel', self).send_tx_proposal(
+        response = Channel(request_channel, self).send_tx_proposal(
             tx_context, peers)
 
         queue = Queue(1)
