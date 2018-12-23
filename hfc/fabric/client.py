@@ -819,7 +819,6 @@ class Client(object):
         )
 
         utils.send_transaction(self.orderers, tran_req, tx_context_tx)
-        sleep(5)
 
         queue = Queue(1)
         res.subscribe(
@@ -829,7 +828,63 @@ class Client(object):
 
         res = queue.get(timeout=timeout)
         _logger.debug(res)
-        return res[0][0][0].response.status == 200
+        return res[0][0][0].response
+    
+    def chaincode_query(self, requestor, channel_name, peer_names, args,
+                         cc_name, cc_version, cc_type=CC_TYPE_JAVA, timeout=10):
+        """
+        Query chaincode without updating the ledger
+        :param requestor: User role who issue the request
+        :param channel_name: the name of the channel to send tx proposal
+        :param peer_names: Names of the peers to install
+        :param args (list): arguments (keys and values) for initialization
+        :param cc_name: chaincode name
+        :param cc_version: chaincode version
+        :param cc_type: chaincode language
+        :param timeout: Timeout to wait
+        :return: True or False
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        tran_prop_req = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            cc_type=cc_type,
+            cc_name=cc_name,
+            cc_version=cc_version,
+            fcn='query',
+            args=args
+        )
+
+        tx_context = create_tx_context(
+            requestor,
+            ecies(),
+            tran_prop_req
+        )
+
+        res = self.get_channel(
+            channel_name).send_tx_proposal(tx_context, peers)
+
+        tran_req = utils.build_tx_req(res)
+        tx_context_tx = create_tx_context(
+            requestor,
+            ecies(),
+            tran_req
+        )
+
+        utils.send_transaction(self.orderers, tran_req, tx_context_tx)
+
+        queue = Queue(1)
+        res.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        res = queue.get(timeout=timeout)
+        _logger.debug(res)
+        return res[0][0][0].response
 
     def query_installed_chaincodes(self, requestor, peer_names, channel_name='mychannel', timeout=10):
         """
