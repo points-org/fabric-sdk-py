@@ -774,7 +774,7 @@ class Client(object):
         return res.status == 200
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
-                         cc_name, cc_version, timeout=10):
+                         cc_name, cc_version, cc_type=CC_TYPE_JAVA, timeout=10):
         """
         Invoke chaincode for ledger update
 
@@ -794,7 +794,7 @@ class Client(object):
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_INVOKE,
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             cc_name=cc_name,
             cc_version=cc_version,
             fcn='invoke',
