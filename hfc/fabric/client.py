@@ -19,7 +19,10 @@ import sys
 import os
 import subprocess
 from time import sleep
-from queue import Queue
+if sys.version_info < (3, 0):
+    from Queue import Queue
+else:
+    from queue import Queue
 import shutil
 
 from hfc.fabric.channel.channel import Channel

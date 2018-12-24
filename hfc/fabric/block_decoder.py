@@ -16,7 +16,7 @@
 import logging
 import binascii
 import datetime
-from datetime import timezone
+from pytz import timezone
 
 # Import required Peer Protos
 from hfc.protos.peer import chaincode_event_pb2

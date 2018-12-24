@@ -23,7 +23,10 @@ from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
     send_transaction_proposal
-from queue import Queue
+if sys.version_info < (3, 0):
+    from Queue import Queue
+else:
+    from queue import Queue
 
 
 SYSTEM_CHANNEL_NAME = "testchainid"

@@ -19,7 +19,10 @@ import random
 import os
 import tarfile
 import io
-from queue import Queue
+if sys.version_info < (3, 0):
+    from Queue import Queue
+else:
+    from queue import Queue
 
 from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
