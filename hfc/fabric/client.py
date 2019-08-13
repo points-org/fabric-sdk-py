@@ -1173,7 +1173,7 @@ class Client(object):
 
         except Exception:
             _logger.error(
-                "Failed to query block: {}", sys.exc_info()[0])
+                "Failed to query block: %s", sys.exc_info()[0])
             raise
 
     def query_transaction(self, requestor, channel_name,
