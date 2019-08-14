@@ -6,14 +6,16 @@ import logging
 import threading
 
 import rx
+import os
 
 from hfc.protos.peer import peer_pb2_grpc
 from hfc.util.channel import create_grpc_channel
 
+from rx.core import Scheduler
+
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 
 _logger = logging.getLogger(__name__ + ".peer")
-
 
 class Peer(object):
     """ A peer node in the network.
@@ -50,6 +52,8 @@ class Peer(object):
         Returns: proposal_response or exception
 
         """
+        if scheduler is None and os.getenv("GRPC_THREADLESS") in ('1', 'true'):
+            scheduler = Scheduler.current_thread
         _logger.debug("Send proposal={}".format(proposal))
         return rx.Observable.start(
             lambda: self._endorser_client.ProcessProposal(proposal),

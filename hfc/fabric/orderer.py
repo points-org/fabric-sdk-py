@@ -15,7 +15,7 @@
 import logging
 
 import rx
-import sys
+import os, sys
 
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2_grpc
@@ -26,6 +26,8 @@ from hfc.util.channel import create_grpc_channel
 from hfc.util.utils import current_timestamp, \
     build_header, build_channel_header
 
+from rx.core import Scheduler
+
 if sys.version_info < (3, 0):
     from Queue import Queue
 else:
@@ -34,7 +36,6 @@ else:
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
 
 _logger = logging.getLogger(__name__ + ".orderer")
-
 
 class Orderer(object):
     """ A orderer node in the network.
@@ -133,11 +134,14 @@ class Orderer(object):
         Returns: orderer_response or exception
 
         """
+        if scheduler is None and os.getenv("GRPC_THREADLESS") in ('1', 'true'):
+            scheduler = Scheduler.current_thread
         _logger.debug("Send envelope={}".format(envelope))
-
+        
         return rx.Observable.start(
-            lambda: self._orderer_client.Broadcast(iter([envelope])),
+            lambda: self._orderer_client.BroadcastSync(envelope),
             scheduler).map(self._handle_response_stream)
+
 
     def delivery(self, envelope, scheduler=None):
         """ Send an delivery envelop to orderer.
@@ -148,7 +152,10 @@ class Orderer(object):
         Returns: orderer_response or exception
 
         """
+        if scheduler is None and os.getenv("GRPC_THREADLESS") in ('1', 'true'):
+            scheduler = Scheduler.current_thread
         _logger.debug("Send envelope={}".format(envelope))
+
         return rx.Observable.start(
             lambda: self._orderer_client.Deliver(iter([envelope])),
             scheduler).map(self._handle_response_stream)
