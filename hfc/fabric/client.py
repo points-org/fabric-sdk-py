@@ -777,7 +777,7 @@ class Client(object):
         return res.status == 200
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
-                         cc_name, cc_version, cc_type=CC_TYPE_JAVA, timeout=10):
+                         cc_name, cc_version, cc_type=CC_TYPE_JAVA, fcn='invoke', timeout=10):
         """
         Invoke chaincode for ledger update
 
@@ -801,7 +801,7 @@ class Client(object):
             cc_type=cc_type,
             cc_name=cc_name,
             cc_version=cc_version,
-            fcn='invoke',
+            fcn=fcn,
             args=args
         )
 
@@ -834,7 +834,7 @@ class Client(object):
         return res[0][0][0].response
     
     def chaincode_query(self, requestor, channel_name, peer_names, args,
-                         cc_name, cc_version, cc_type=CC_TYPE_JAVA, timeout=10):
+                         cc_name, cc_version, cc_type=CC_TYPE_JAVA, fcn='query', timeout=10):
         """
         Query chaincode without updating the ledger
         :param requestor: User role who issue the request
@@ -857,7 +857,7 @@ class Client(object):
             cc_type=cc_type,
             cc_name=cc_name,
             cc_version=cc_version,
-            fcn='query',
+            fcn=fcn,
             args=args
         )
 
